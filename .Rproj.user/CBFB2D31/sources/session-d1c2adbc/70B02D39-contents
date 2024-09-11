@@ -1,0 +1,25 @@
+library(stringr)
+
+file<-read.delim('../Downloads/file.txt', header = F)
+file$ogName<-gsub('-', '*', str_extract(file$V1, "(?<=value=)[^>]+"))
+file$current_name<-str_extract(file$V1, "(?<=>)[^<]+")
+
+file$current_name
+
+maps<-gsub('.jpg', '', list.files('../pypopMaps/'))
+
+notMade<-file$current_name[!file$current_name %in% maps]
+
+
+for(i in notMade){
+  tryCatch({
+    PALM(i, variantType="allele", mask = FALSE, color=TRUE, filterMigrant=TRUE, filename = solberg_dataset, generateLowFreq = TRUE, resolution = 200)
+    print(i)
+  }, 
+  warning = function(w) {
+    print(w)
+    return()
+  }
+  )}
+
+PALM('DPB1*107:01', variantType="allele", mask = FALSE, color=TRUE, filterMigrant=TRUE, filename = SSHAARP::solberg_dataset, generateLowFreq = TRUE, resolution = 200)
